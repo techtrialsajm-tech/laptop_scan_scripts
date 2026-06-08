@@ -1,9 +1,53 @@
 # Laptop Scan Scripts
 
-A collection of PowerShell scripts for Windows storage cleanup, security repair, and performance optimisation.
+A collection of PowerShell scripts and Python utilities for Windows storage cleanup, security repair, performance optimisation, and high-throughput file transfer.
 
-> Run all scripts as **Administrator** for full functionality.
+> Run PowerShell scripts as **Administrator** for full functionality.
 > Execute with: `powershell -ExecutionPolicy Bypass -File .\<script-name>.ps1`
+
+---
+
+## File Transfer
+
+### `mover.py` — High-Throughput File Mover
+
+Batch-copies files from one drive to another (e.g. source USB/memory card → target hard drive), maximising transfer speed automatically.
+
+**Features:**
+- Benchmarks read speed on source and write speed on target before copying
+- Auto-tunes chunk size and parallel worker count based on measured speeds
+- Copies large files (≥ 100 MB) with chunked streaming — never buffers to the internal drive
+- Skips files already present at the destination (safe to re-run)
+- SHA-256 checksum verification after every file
+- Pre-flight check: aborts if target doesn't have enough free space
+- Mid-transfer space check: stops cleanly if the drive fills up
+- Live progress bar with speed and ETA
+
+**Requirements:** Python 3.8+
+
+```powershell
+# Interactive — prompts for source and target
+python mover.py
+
+# Direct paths
+python mover.py E:\ F:\Backup
+
+# Skip checksum verification (faster)
+python mover.py E:\ F:\Backup --no-verify
+
+# Override worker count
+python mover.py E:\ F:\Backup --workers 4
+```
+
+---
+
+### `check_usb.ps1` — USB Drive Inspector
+
+Lists all connected drives with size, free space, and drive letters. Detects USB host controller generation (2.0 / 3.0 / 3.1) and shows theoretical max speed.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\check_usb.ps1
+```
 
 ---
 
@@ -11,6 +55,8 @@ A collection of PowerShell scripts for Windows storage cleanup, security repair,
 
 | Script | Purpose | Run As Admin | Modifies System |
 |---|---|---|---|
+| `mover.py` | High-throughput file transfer from source to target drive. Auto-benchmarks drives and tunes parallel workers. | No | No — copies only |
+| `check_usb.ps1` | Lists connected drives and USB controller speeds. | No | No — read only |
 | `find-large-files.ps1` | Scans user profile for large files and folders. Shows top offenders by size with Claude Desktop VM breakdown. | Recommended | No — read only |
 | `full-scan.ps1` | Full C:\ storage scan. Lists safe-to-delete cache folders with sizes, top 30 largest files, top 30 largest folders, and all `node_modules` folders. | Recommended | No — read only |
 | `claude-breakdown.ps1` | Deep size breakdown of the Claude Desktop package folder (`Claude_pzs8sxrjxfjjc`). Identifies live VM files vs safe-to-delete backups. | No | No — read only |

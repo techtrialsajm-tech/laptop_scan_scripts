@@ -37,7 +37,7 @@ Write-Host " Min size   : $(Format-Size $minBytes)" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 
 # ============================================================
-# SECTION 1 — NEVER ACCESSED (LastAccessTime = CreationTime)
+# SECTION 1 -NEVER ACCESSED (LastAccessTime = CreationTime)
 # Files created and never opened
 # ============================================================
 Write-Host ""
@@ -81,14 +81,15 @@ $neverAccessed | Sort-Object Size -Descending | Select-Object -First 40 | ForEac
     Write-Host ("{0,-70} {1,10}  created:{2}  age:{3}d" -f $_.Path, $_.SizeStr, $_.Created, $_.AgeDays) -ForegroundColor $color
 }
 $neverTotal = ($neverAccessed | Measure-Object -Property Size -Sum).Sum
+$neverTotalSafe = if ($neverTotal) { [long]$neverTotal } else { 0 }
 Write-Host ""
-Write-Host ("  Total: {0} files - {1}" -f $neverAccessed.Count, (Format-Size (if ($neverTotal) { [long]$neverTotal } else { 0 }))) -ForegroundColor Cyan
+Write-Host ("  Total: {0} files - {1}" -f $neverAccessed.Count, (Format-Size $neverTotalSafe)) -ForegroundColor Cyan
 
 # ============================================================
-# SECTION 2 — OLD DOWNLOADS (most common junk accumulator)
+# SECTION 2 - OLD DOWNLOADS (most common junk accumulator)
 # ============================================================
 Write-Host ""
-Write-Host "=== DOWNLOADS FOLDER — NOT ACCESSED IN $DaysOld+ DAYS ===" -ForegroundColor Yellow
+Write-Host "=== DOWNLOADS FOLDER - NOT ACCESSED IN $DaysOld+ DAYS ===" -ForegroundColor Yellow
 Write-Host ""
 
 $downloads = "$env:USERPROFILE\Downloads"
@@ -113,12 +114,13 @@ if (Test-Path $downloads) {
         Write-Host ("{0,-45} {1,-10} {2,10}  last:{3}  age:{4}d" -f $_.Name, $_.Type, $_.SizeStr, $_.LastAccessed, $_.AgeDays) -ForegroundColor $color
     }
     $dlTotal = ($oldDownloads | Measure-Object -Property Size -Sum).Sum
+    $dlTotalSafe = if ($dlTotal) { [long]$dlTotal } else { 0 }
     Write-Host ""
-    Write-Host ("  Total: {0} items - {1}" -f $oldDownloads.Count, (Format-Size (if ($dlTotal) { [long]$dlTotal } else { 0 }))) -ForegroundColor Cyan
+    Write-Host ("  Total: {0} items - {1}" -f $oldDownloads.Count, (Format-Size $dlTotalSafe)) -ForegroundColor Cyan
 }
 
 # ============================================================
-# SECTION 3 — STALE FOLDERS IN USER PROFILE
+# SECTION 3 -STALE FOLDERS IN USER PROFILE
 # Folders not touched in 180+ days
 # ============================================================
 Write-Host ""
@@ -158,8 +160,8 @@ $staleFolders | Sort-Object Size -Descending | Select-Object -First 30 | ForEach
 }
 
 # ============================================================
-# SECTION 4 — DUPLICATE FILENAMES IN DOWNLOADS
-# Files with (1), (2), Copy suffixes — usually forgotten duplicates
+# SECTION 4 -DUPLICATE FILENAMES IN DOWNLOADS
+# Files with (1), (2), Copy suffixes -usually forgotten duplicates
 # ============================================================
 Write-Host ""
 Write-Host "=== LIKELY DUPLICATE FILES (in Downloads + Desktop) ===" -ForegroundColor Yellow
@@ -177,7 +179,7 @@ foreach ($dp in $dupPaths) {
 }
 
 # ============================================================
-# SECTION 5 — OLD INSTALLER FILES
+# SECTION 5 -OLD INSTALLER FILES
 # .exe, .msi, .zip, .7z, .iso not accessed in 180+ days
 # ============================================================
 Write-Host ""
@@ -211,8 +213,9 @@ $oldInstallers | Sort-Object Size -Descending | ForEach-Object {
     Write-Host ("{0,-70} {1,10}  last:{2}" -f $_.Path, $_.SizeStr, $_.LastAccessed) -ForegroundColor $color
 }
 $instTotal = ($oldInstallers | Measure-Object -Property Size -Sum).Sum
+$instTotalSafe = if ($instTotal) { [long]$instTotal } else { 0 }
 Write-Host ""
-Write-Host ("  Total: {0} files - {1}" -f $oldInstallers.Count, (Format-Size (if ($instTotal) { [long]$instTotal } else { 0 }))) -ForegroundColor Cyan
+Write-Host ("  Total: {0} files - {1}" -f $oldInstallers.Count, (Format-Size $instTotalSafe)) -ForegroundColor Cyan
 
 # ============================================================
 # SUMMARY

@@ -65,6 +65,7 @@ powershell -ExecutionPolicy Bypass -File .\check_usb.ps1
 | `check-dell.ps1` | Checks for Dell software remnants after uninstall — scans registry, running processes, services, scheduled tasks, and program folders. | No | No — read only |
 | `boost-performance.ps1` | Tunes RAM, disk, CPU, and network for maximum performance. Sets High Performance power plan, disables CPU throttling and core parking, enables SSD TRIM, disables telemetry services, removes visual effects, and lowers network latency. | Yes | Yes — registry + services + power plan |
 | `startup-analyser.ps1` | Analyses boot time and startup load. Shows last boot duration, all auto-launch programs (colour-coded safe/keep/review), automatic-start services, boot delay events from Windows event log, and ready-to-run disable commands. | Yes | No — read only |
+| `find-stale-files.ps1` | Finds files and folders created but never accessed, old downloads, stale folders, duplicate files, and old installer/archive files. Configurable age threshold (default 180 days). | Recommended | No — read only |
 
 ---
 

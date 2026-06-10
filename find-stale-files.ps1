@@ -82,7 +82,7 @@ $neverAccessed | Sort-Object Size -Descending | Select-Object -First 40 | ForEac
 }
 $neverTotal = ($neverAccessed | Measure-Object -Property Size -Sum).Sum
 Write-Host ""
-Write-Host ("  Total: {0} files — {1}" -f $neverAccessed.Count, (Format-Size ([long]($neverTotal ?? 0)))) -ForegroundColor Cyan
+Write-Host ("  Total: {0} files - {1}" -f $neverAccessed.Count, (Format-Size (if ($neverTotal) { [long]$neverTotal } else { 0 }))) -ForegroundColor Cyan
 
 # ============================================================
 # SECTION 2 — OLD DOWNLOADS (most common junk accumulator)
@@ -114,7 +114,7 @@ if (Test-Path $downloads) {
     }
     $dlTotal = ($oldDownloads | Measure-Object -Property Size -Sum).Sum
     Write-Host ""
-    Write-Host ("  Total: {0} items — {1}" -f $oldDownloads.Count, (Format-Size ([long]($dlTotal ?? 0)))) -ForegroundColor Cyan
+    Write-Host ("  Total: {0} items - {1}" -f $oldDownloads.Count, (Format-Size (if ($dlTotal) { [long]$dlTotal } else { 0 }))) -ForegroundColor Cyan
 }
 
 # ============================================================
@@ -212,7 +212,7 @@ $oldInstallers | Sort-Object Size -Descending | ForEach-Object {
 }
 $instTotal = ($oldInstallers | Measure-Object -Property Size -Sum).Sum
 Write-Host ""
-Write-Host ("  Total: {0} files — {1}" -f $oldInstallers.Count, (Format-Size ([long]($instTotal ?? 0)))) -ForegroundColor Cyan
+Write-Host ("  Total: {0} files - {1}" -f $oldInstallers.Count, (Format-Size (if ($instTotal) { [long]$instTotal } else { 0 }))) -ForegroundColor Cyan
 
 # ============================================================
 # SUMMARY
